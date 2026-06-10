@@ -1,0 +1,375 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .wrap { padding: 1.5rem 0; max-width: 680px; }
+  h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+  .sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.5rem; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab { padding: 7px 16px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); font-size: 14px; cursor: pointer; color: var(--color-text-secondary); transition: all .15s; }
+  .tab.active { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-primary); font-weight: 500; }
+  .section-label { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 8px; letter-spacing: .03em; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .team-row { display: grid; grid-template-columns: 28px 1fr 1fr 1fr 1fr; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
+  .team-row:last-child { border-bottom: none; }
+  .team-row.header { font-weight: 500; color: var(--color-text-secondary); font-size: 12px; }
+  .rank-badge { width: 24px; height: 24px; border-radius: 50%; background: var(--color-background-secondary); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+  .rank-badge.assigned { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; }
+  .btn { padding: 8px 18px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); font-size: 14px; cursor: pointer; color: var(--color-text-primary); transition: all .15s; }
+  .btn:hover { background: var(--color-background-secondary); }
+  .btn.primary { background: #1D9E75; color: #fff; border-color: #0F6E56; }
+  .btn.primary:hover { background: #0F6E56; }
+  .btn.danger { color: #A32D2D; border-color: #F09595; }
+  .btn.danger:hover { background: #FCEBEB; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .action-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .lottery-area { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; }
+  .draw-step { text-align: center; }
+  .draw-step p { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 12px; }
+  .pick-name { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 16px; }
+  .num-ball { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: #1D9E75; color: #fff; font-size: 22px; font-weight: 500; margin: 0 auto 16px; }
+  .num-ball.shake { animation: shake .4s ease; }
+  @keyframes shake { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-12deg)} 40%{transform:rotate(12deg)} 60%{transform:rotate(-8deg)} 80%{transform:rotate(8deg)} }
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .result-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--color-background-primary); border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
+  .share-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 13px; font-family: var(--font-mono); color: var(--color-text-secondary); word-break: break-all; margin-bottom: 8px; }
+  .mode-btns { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+  .mode-btn { flex: 1; padding: 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); cursor: pointer; font-size: 14px; color: var(--color-text-secondary); text-align: center; transition: all .15s; }
+  .mode-btn.active { border-color: #1D9E75; background: #E1F5EE; color: #0F6E56; font-weight: 500; }
+  .input-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 6px; margin-bottom: 8px; align-items: start; }
+  .input-row input { padding: 6px 10px; font-size: 13px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); width: 100%; }
+  .add-btn { padding: 6px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); cursor: pointer; font-size: 13px; white-space: nowrap; }
+  .add-btn:hover { background: var(--color-background-secondary); }
+  .notice { font-size: 13px; color: var(--color-text-secondary); padding: 10px 14px; background: #E6F1FB; border-radius: var(--border-radius-md); margin-bottom: 12px; color: #185FA5; }
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">자랑스러운 연암인 경진대회 발표순서 제비뽑기 앱</h2>
+  <h1>발표순서 제비뽑기</h1>
+  <p class="sub">2026학년도 자랑스러운 연암인 경진대회</p>
+
+  <div class="tabs" id="departmentTabs"></div>
+
+  <div id="mainContent"></div>
+</div>
+
+<script>
+const DEPTS = {
+  '스마트원예계열': {
+    date: '2026. 6. 17.(수) 09:00~',
+    teams: [
+      { ban: '2반', jo: '스마트팜엔지니어', jojang: '한정수', presenter: '이한림' },
+      { ban: '5반', jo: '스마트팜작물재배관리사', jojang: '인한빈', presenter: '김범진' },
+      { ban: '3반', jo: '스마트팜작물재배관리사', jojang: '이현호', presenter: '이현호' },
+      { ban: '6반', jo: '스마트팜운영관리자', jojang: '김하진', presenter: '김하진' },
+      { ban: '2반', jo: '조경디자이너', jojang: '유한얼', presenter: '김민주' },
+      { ban: '4반', jo: '스마트팜작물재배관리사', jojang: '김주영', presenter: '최성진' },
+      { ban: '6반', jo: '스마트팜재배관리사', jojang: '우아한', presenter: '이승운' },
+      { ban: '3반', jo: '조경설계사', jojang: '손동환', presenter: '이민우, 손정우' },
+      { ban: '1반', jo: '스마트팜재배경영인', jojang: '이가은', presenter: '이가은' },
+      { ban: '5반', jo: '정원관리사', jojang: '황민서', presenter: '황민서' },
+      { ban: '4반', jo: '채소재배사', jojang: '한재은', presenter: '한재은' },
+      { ban: '1반', jo: '작물재배사', jojang: '김가연', presenter: '이은성' },
+    ]
+  },
+  '스마트축산계열': {
+    date: '2026. 6. 18.(목) 10:00~',
+    teams: []
+  },
+  '동물보호계열': {
+    date: '2026. 6. 17.(수) 14:00~',
+    teams: []
+  }
+};
+
+let currentDept = '스마트원예계열';
+let orders = {};
+let mode = 'step';
+let currentPickIdx = 0;
+let shuffledNums = [];
+let isAnimating = false;
+let newTeamFields = { ban: '', jo: '', jojang: '', presenter: '' };
+
+function getStorageKey(dept) { return 'lotto_' + dept; }
+
+function loadOrders() {
+  const key = getStorageKey(currentDept);
+  try {
+    const raw = new URLSearchParams(location.search).get('d');
+    if (raw) {
+      const all = JSON.parse(atob(raw));
+      if (all[currentDept]) return all[currentDept];
+    }
+  } catch(e) {}
+  const saved = localStorage.getItem(key);
+  if (saved) return JSON.parse(saved);
+  return {};
+}
+
+function saveOrders() {
+  localStorage.setItem(getStorageKey(currentDept), JSON.stringify(orders));
+}
+
+function getTeams() {
+  return DEPTS[currentDept].teams;
+}
+
+function allAssigned() {
+  const teams = getTeams();
+  return teams.length > 0 && teams.every((_, i) => orders[i] !== undefined);
+}
+
+function renderTabs() {
+  const el = document.getElementById('departmentTabs');
+  el.innerHTML = Object.keys(DEPTS).map(d => `
+    <button class="tab ${d === currentDept ? 'active' : ''}" onclick="switchDept('${d}')">${d}</button>
+  `).join('');
+}
+
+function switchDept(dept) {
+  currentDept = dept;
+  orders = loadOrders();
+  currentPickIdx = 0;
+  shuffledNums = [];
+  renderTabs();
+  render();
+}
+
+function buildShareURL() {
+  const all = {};
+  Object.keys(DEPTS).forEach(d => {
+    const key = 'lotto_' + d;
+    const saved = localStorage.getItem(key);
+    if (saved) all[d] = JSON.parse(saved);
+  });
+  all[currentDept] = orders;
+  const encoded = btoa(JSON.stringify(all));
+  const url = location.origin + location.pathname + '?d=' + encoded;
+  return url;
+}
+
+function copyLink() {
+  const url = buildShareURL();
+  navigator.clipboard.writeText(url).then(() => {
+    document.getElementById('copyBtn').textContent = '복사됨!';
+    setTimeout(() => { document.getElementById('copyBtn').textContent = '링크 복사'; }, 2000);
+  });
+}
+
+function resetDraw() {
+  orders = {};
+  currentPickIdx = 0;
+  shuffledNums = [];
+  saveOrders();
+  render();
+}
+
+function autoShuffle() {
+  const teams = getTeams();
+  const nums = Array.from({length: teams.length}, (_, i) => i + 1);
+  for (let i = nums.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [nums[i], nums[j]] = [nums[j], nums[i]];
+  }
+  teams.forEach((_, i) => { orders[i] = nums[i]; });
+  saveOrders();
+  render();
+}
+
+function pickNext() {
+  if (isAnimating) return;
+  const teams = getTeams();
+  const remaining = Array.from({length: teams.length}, (_, i) => i + 1)
+    .filter(n => !Object.values(orders).includes(n));
+  if (remaining.length === 0) return;
+  isAnimating = true;
+  const ball = document.getElementById('numBall');
+  let count = 0;
+  const interval = setInterval(() => {
+    const rand = remaining[Math.floor(Math.random() * remaining.length)];
+    if (ball) ball.textContent = rand;
+    count++;
+    if (count >= 10) {
+      clearInterval(interval);
+      const picked = remaining[Math.floor(Math.random() * remaining.length)];
+      if (ball) {
+        ball.textContent = picked;
+        ball.classList.add('shake');
+        setTimeout(() => ball.classList.remove('shake'), 400);
+      }
+      orders[currentPickIdx] = picked;
+      currentPickIdx++;
+      saveOrders();
+      isAnimating = false;
+      render();
+    }
+  }, 70);
+}
+
+function addTeam() {
+  const f = newTeamFields;
+  if (!f.ban || !f.jo || !f.jojang || !f.presenter) {
+    alert('모든 항목을 입력해주세요.');
+    return;
+  }
+  DEPTS[currentDept].teams.push({...f});
+  newTeamFields = { ban: '', jo: '', jojang: '', presenter: '' };
+  render();
+}
+
+function removeTeam(i) {
+  DEPTS[currentDept].teams.splice(i, 1);
+  orders = {};
+  currentPickIdx = 0;
+  saveOrders();
+  render();
+}
+
+function updateField(field, val) {
+  newTeamFields[field] = val;
+}
+
+function render() {
+  const dept = DEPTS[currentDept];
+  const teams = dept.teams;
+  const done = allAssigned();
+
+  let html = '';
+
+  html += `<div style="font-size:13px; color:var(--color-text-secondary); margin-bottom:1rem;">
+    <i class="ti ti-calendar" aria-hidden="true" style="font-size:15px; vertical-align:-2px; margin-right:4px;"></i>${dept.date}
+  </div>`;
+
+  if (teams.length === 0) {
+    html += `<div class="card">
+      <p class="section-label" style="margin-bottom:12px;">팀 추가</p>
+      <div class="notice"><i class="ti ti-info-circle" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:4px;"></i>아직 본선 진출팀이 등록되지 않았습니다. 팀을 추가해주세요.</div>
+      <div class="input-row">
+        <input placeholder="분반" value="${newTeamFields.ban}" oninput="updateField('ban',this.value)" />
+        <input placeholder="커리어패스(조)" value="${newTeamFields.jo}" oninput="updateField('jo',this.value)" />
+        <input placeholder="조장" value="${newTeamFields.jojang}" oninput="updateField('jojang',this.value)" />
+        <input placeholder="발표자" value="${newTeamFields.presenter}" oninput="updateField('presenter',this.value)" />
+        <button class="add-btn" onclick="addTeam()">추가</button>
+      </div>
+    </div>`;
+    document.getElementById('mainContent').innerHTML = html;
+    return;
+  }
+
+  if (!done) {
+    html += `<div class="card" style="margin-bottom:12px;">
+      <p class="section-label" style="margin-bottom:10px;">추첨 방식</p>
+      <div class="mode-btns">
+        <button class="mode-btn ${mode==='step'?'active':''}" onclick="setMode('step')">
+          <i class="ti ti-hand-finger" aria-hidden="true" style="font-size:16px;vertical-align:-2px;margin-right:4px;"></i>대표학생이 직접 뽑기
+        </button>
+        <button class="mode-btn ${mode==='auto'?'active':''}" onclick="setMode('auto')">
+          <i class="ti ti-refresh" aria-hidden="true" style="font-size:16px;vertical-align:-2px;margin-right:4px;"></i>자동 일괄 추첨
+        </button>
+      </div>`;
+
+    if (mode === 'step') {
+      const unassigned = teams.slice(currentPickIdx);
+      if (currentPickIdx < teams.length) {
+        const current = teams[currentPickIdx];
+        html += `<div class="lottery-area">
+          <div class="draw-step">
+            <p style="margin-bottom:4px;">${currentPickIdx + 1}번째 팀이 순서를 뽑습니다</p>
+            <p class="pick-name">${current.ban} · ${current.jojang} 조장 (${current.presenter})</p>
+            <div class="num-ball" id="numBall">?</div>
+            <button class="btn primary" onclick="pickNext()" ${isAnimating?'disabled':''}>
+              <i class="ti ti-player-play" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:4px;"></i>뽑기
+            </button>
+          </div>
+        </div>`;
+      }
+    } else {
+      html += `<div class="lottery-area" style="text-align:center;">
+        <p style="font-size:14px;color:var(--color-text-secondary);margin-bottom:12px;">버튼을 누르면 모든 팀의 발표 순서를 한 번에 무작위 배정합니다.</p>
+        <button class="btn primary" onclick="autoShuffle()">
+          <i class="ti ti-refresh" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:4px;"></i>전체 자동 추첨
+        </button>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+
+  if (teams.length > 0 && Object.keys(orders).length > 0) {
+    const sorted = teams.map((t, i) => ({...t, idx: i, order: orders[i]}))
+      .filter(t => t.order !== undefined)
+      .sort((a, b) => a.order - b.order);
+
+    html += `<div class="card">
+      <p class="section-label" style="margin-bottom:10px;">${done ? '최종 발표순서' : '지금까지 배정된 순서'}</p>
+      <div class="team-row header">
+        <div>순서</div><div>분반</div><div>커리어패스</div><div>조장</div><div>발표자</div>
+      </div>`;
+    sorted.forEach(t => {
+      html += `<div class="team-row">
+        <div><span class="rank-badge assigned">${t.order}</span></div>
+        <div style="color:var(--color-text-primary)">${t.ban}</div>
+        <div style="color:var(--color-text-secondary)">${t.jo}</div>
+        <div style="color:var(--color-text-primary)">${t.jojang}</div>
+        <div style="color:var(--color-text-primary)">${t.presenter}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (done) {
+    html += `<div class="card">
+      <p class="section-label" style="margin-bottom:8px;">결과 공유</p>
+      <div class="share-box" id="shareUrl">${buildShareURL().substring(0,80)}...</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn primary" id="copyBtn" onclick="copyLink()">
+          <i class="ti ti-copy" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:4px;"></i>링크 복사
+        </button>
+        <button class="btn danger" onclick="resetDraw()">
+          <i class="ti ti-refresh" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:4px;"></i>다시 추첨
+        </button>
+      </div>
+    </div>`;
+  } else if (Object.keys(orders).length > 0) {
+    html += `<div style="text-align:right;margin-bottom:8px;">
+      <button class="btn danger" onclick="resetDraw()">
+        <i class="ti ti-refresh" aria-hidden="true" style="font-size:15px;vertical-align:-2px;margin-right:4px;"></i>처음부터 다시
+      </button>
+    </div>`;
+  }
+
+  html += `<div class="card">
+    <p class="section-label" style="margin-bottom:10px;">팀 관리</p>
+    <div class="input-row">
+      <input placeholder="분반" value="${newTeamFields.ban}" oninput="updateField('ban',this.value)" />
+      <input placeholder="커리어패스(조)" value="${newTeamFields.jo}" oninput="updateField('jo',this.value)" />
+      <input placeholder="조장" value="${newTeamFields.jojang}" oninput="updateField('jojang',this.value)" />
+      <input placeholder="발표자" value="${newTeamFields.presenter}" oninput="updateField('presenter',this.value)" />
+      <button class="add-btn" onclick="addTeam()">추가</button>
+    </div>
+    ${teams.map((t, i) => `
+      <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px;">
+        <span style="flex:1;color:var(--color-text-secondary)">${t.ban}</span>
+        <span style="flex:2;color:var(--color-text-primary)">${t.jo}</span>
+        <span style="flex:1;color:var(--color-text-primary)">${t.jojang}</span>
+        <span style="flex:1;color:var(--color-text-primary)">${t.presenter}</span>
+        <button onclick="removeTeam(${i})" style="background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:16px;padding:0 4px;"><i class="ti ti-trash" aria-hidden="true"></i></button>
+      </div>
+    `).join('')}
+  </div>`;
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function setMode(m) {
+  mode = m;
+  currentPickIdx = Object.keys(orders).length;
+  render();
+}
+
+orders = loadOrders();
+if (Object.keys(orders).length > 0) {
+  currentPickIdx = Object.keys(orders).length;
+}
+renderTabs();
+render();
+</script>
